@@ -1,19 +1,33 @@
 package com.erkanerol.core;
 
+import com.erkanerol.events.PutEvent;
+import com.erkanerol.events.RemoveEvent;
+import com.erkanerol.network.NetworkManager;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class DistributedHashTableImpl<K,V> implements  DistributedHashTable<K,V> {
 
     private final Map<K,V> internalMap;
+    private final NetworkManager networkManager;
 
-    public DistributedHashTableImpl() {
+    private final Object lock;
+
+    public DistributedHashTableImpl(NetworkManager networkManager) {
+        this.networkManager = networkManager;
         this.internalMap = new HashMap<>();
+        lock = new Object();
     }
 
     @Override
     public void put(K key, V value) {
-        internalMap.put(key,value);
+
+        synchronized (lock){
+            internalMap.put(key,value);
+            networkManager.propagate(new PutEvent(key,value));
+        }
+
     }
 
     @Override
@@ -23,6 +37,11 @@ public class DistributedHashTableImpl<K,V> implements  DistributedHashTable<K,V>
 
     @Override
     public void remove(K key) {
-        internalMap.remove(key);
+
+        synchronized (lock){
+            internalMap.remove(key);
+            networkManager.propagate(new RemoveEvent(key));
+        }
+
     }
 }

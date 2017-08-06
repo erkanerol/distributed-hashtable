@@ -1,15 +1,17 @@
 package com.erkanerol.network;
 
+import com.erkanerol.events.MapEvent;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class NetworkWorker {
+public class NetworkManager {
 
     private final int port;
     private final String host;
 
-    public NetworkWorker(int port, String host) {
+    public NetworkManager(int port, String host) {
         this.port = port;
         this.host = host;
     }
@@ -31,10 +33,12 @@ public class NetworkWorker {
                 System.out.println("I/O error: " + e);
             }
 
-            new MyThread(socket).start();
+            new MessageProcessorThread(socket).start();
         }
     }
 
 
+    public void propagate(MapEvent event) {
 
+    }
 }

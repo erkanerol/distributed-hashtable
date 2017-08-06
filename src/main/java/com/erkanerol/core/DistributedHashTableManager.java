@@ -1,29 +1,37 @@
 package com.erkanerol.core;
 
-import com.erkanerol.network.NetworkWorker;
+import com.erkanerol.events.CreateEvent;
+import com.erkanerol.network.NetworkManager;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class DistributedHashTableManager {
 
-    private final Config config;
-    private final NetworkWorker networkWorker;
+    private final NetworkManager networkManager;
     public Map<String,DistributedHashTable> allMaps;
 
     public DistributedHashTableManager(Config config) {
-        this.config = config;
-        this.networkWorker = new NetworkWorker(config.getPort(),config.getHost());
+        this.networkManager = new NetworkManager(config.getPort(),config.getHost());
         allMaps = new HashMap<>();
     }
 
     public void startUp(){
-        //this.networkWorker.open();
+        //this.networkManager.open();
     }
 
-    public <K,V> DistributedHashTable<K,V> createDistributedHashTable(String mapName, Class<K> keyClass, Class<V> valueClass) {
-        DistributedHashTableImpl<K, V> newMap = new DistributedHashTableImpl<K,V>();
-        allMaps.put(mapName, newMap);
+    public <K,V> DistributedHashTable<K,V> getDistributedHashTable(String mapName, Class<K> keyClass, Class<V> valueClass) {
+
+        DistributedHashTableImpl<K, V> newMap = (DistributedHashTableImpl<K, V>) allMaps.get(mapName);
+
+        if (newMap == null){
+            newMap = new DistributedHashTableImpl<K,V>(this.networkManager);
+            allMaps.put(mapName, newMap);
+            this.networkManager.propagate(new CreateEvent<K,V>(mapName));
+        }
+
         return newMap;
     }
+
+
 }

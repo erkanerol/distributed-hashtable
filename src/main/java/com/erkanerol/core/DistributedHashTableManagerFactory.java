@@ -6,7 +6,7 @@ public class DistributedHashTableManagerFactory {
 
     public DistributedHashTableManager createNewInstance(Config config) {
         DistributedHashTableManager manager = new DistributedHashTableManager(config) ;
-        //manager.startUp();
+        manager.startUp();
         return manager;
     }
 }
