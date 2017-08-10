@@ -1,6 +1,6 @@
 package com.erkanerol.events;
 
-public class PutEvent<K,V> extends MapEvent {
+public class PutEvent<K,V> extends Event {
 
     private K key;
     private V value;
@@ -12,7 +12,15 @@ public class PutEvent<K,V> extends MapEvent {
     }
 
     @Override
-    public MapEventType getType() {
-        return MapEventType.PUT;
+    public EventType getType() {
+        return EventType.PUT;
+    }
+
+    @Override
+    public String toString() {
+        return "PutEvent{" +
+                "key=" + key +
+                ", value=" + value +
+                '}';
     }
 }

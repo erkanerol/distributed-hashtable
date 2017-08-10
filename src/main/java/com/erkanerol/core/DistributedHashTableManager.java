@@ -9,15 +9,15 @@ import java.util.Map;
 public class DistributedHashTableManager {
 
     private final NetworkManager networkManager;
-    public Map<String,DistributedHashTable> allMaps;
+    private Map<String,DistributedHashTable> allMaps;
 
     public DistributedHashTableManager(Config config) {
-        this.networkManager = new NetworkManager(config.getPort(),config.getHost());
+        this.networkManager = new NetworkManager(config);
         allMaps = new HashMap<>();
     }
 
     public void startUp(){
-        //this.networkManager.open();
+        this.networkManager.open();
     }
 
     public <K,V> DistributedHashTable<K,V> getDistributedHashTable(String mapName, Class<K> keyClass, Class<V> valueClass) {

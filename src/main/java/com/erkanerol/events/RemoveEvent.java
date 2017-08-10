@@ -1,6 +1,6 @@
 package com.erkanerol.events;
 
-public class RemoveEvent<K> extends MapEvent {
+public class RemoveEvent<K> extends Event {
 
     private K key;
 
@@ -9,7 +9,14 @@ public class RemoveEvent<K> extends MapEvent {
     }
 
     @Override
-    public MapEventType getType() {
-        return MapEventType.REMOVE;
+    public EventType getType() {
+        return EventType.REMOVE;
+    }
+
+    @Override
+    public String toString() {
+        return "RemoveEvent{" +
+                "key=" + key +
+                '}';
     }
 }

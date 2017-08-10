@@ -1,6 +1,6 @@
 package com.erkanerol.events;
 
-public class CreateEvent<K,V> extends MapEvent {
+public class CreateEvent<K,V> extends Event {
 
 
     private final String mapName;
@@ -10,7 +10,7 @@ public class CreateEvent<K,V> extends MapEvent {
     }
 
     @Override
-    public MapEventType getType() {
-        return MapEventType.CREATE;
+    public EventType getType() {
+        return EventType.CREATE;
     }
 }
