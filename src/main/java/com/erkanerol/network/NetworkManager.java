@@ -1,9 +1,12 @@
 package com.erkanerol.network;
 
 import com.erkanerol.core.Config;
+import com.erkanerol.core.DistributedHashTable;
 import com.erkanerol.core.DistributedHashTableManager;
 import com.erkanerol.events.AttendEvent;
 import com.erkanerol.events.Event;
+import com.erkanerol.events.PutEvent;
+import com.erkanerol.events.RemoveEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,6 +82,16 @@ public class NetworkManager {
             Peer peer = new Peer(socket.getInetAddress().getHostAddress(),attendEvent.getPort());
             this.peerList.add(peer);
             logger.info("New peer is added {}",peer);
+        } else if (event instanceof PutEvent){
+            PutEvent putEvent = (PutEvent) event;
+            DistributedHashTable<Object, Object> map = this.distributedHashTableManager.getDistributedHashTable(putEvent.getMapName());
+            map.putLocal(putEvent.getKey(),putEvent.getValue());
+            logger.info("Put event is prossed",putEvent);
+        } else if (event instanceof RemoveEvent){
+            RemoveEvent removeEvent = (RemoveEvent) event;
+            DistributedHashTable<Object, Object> map = this.distributedHashTableManager.getDistributedHashTable(removeEvent.getMapName());
+            map.removeLocal(removeEvent.getKey());
+            logger.info("Remove event is prossed",removeEvent);
         }
     }
 }

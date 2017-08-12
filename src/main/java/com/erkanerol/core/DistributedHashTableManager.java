@@ -1,6 +1,5 @@
 package com.erkanerol.core;
 
-import com.erkanerol.events.CreateEvent;
 import com.erkanerol.network.NetworkManager;
 
 import java.util.HashMap;
@@ -20,20 +19,19 @@ public class DistributedHashTableManager {
         this.networkManager.open();
     }
 
-    public <K,V> DistributedHashTable<K,V> getDistributedHashTable(String mapName, Class<K> keyClass, Class<V> valueClass) {
+    public <K,V> DistributedHashTable<K,V> getDistributedHashTable(String mapName) {
 
         DistributedHashTableImpl<K, V> newMap = (DistributedHashTableImpl<K, V>) allMaps.get(mapName);
 
         if (newMap == null){
             newMap = creteNewMap(mapName);
-            this.networkManager.propagate(new CreateEvent<K,V>(mapName));
         }
 
         return newMap;
     }
 
     public <K, V> DistributedHashTableImpl<K, V> creteNewMap(String mapName) {
-        DistributedHashTableImpl<K, V> newMap = new DistributedHashTableImpl<K,V>(this.networkManager);
+        DistributedHashTableImpl<K, V> newMap = new DistributedHashTableImpl<K,V>(mapName,this.networkManager);
         allMaps.put(mapName, newMap);
         return newMap;
     }

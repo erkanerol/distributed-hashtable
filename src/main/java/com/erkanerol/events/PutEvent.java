@@ -2,11 +2,12 @@ package com.erkanerol.events;
 
 public class PutEvent<K,V> extends Event {
 
-    private K key;
-    private V value;
+    private final String mapName;
+    private final K key;
+    private final V value;
 
-
-    public PutEvent(K key, V value) {
+    public PutEvent(String mapName, K key, V value) {
+        this.mapName = mapName;
         this.key = key;
         this.value = value;
     }
@@ -19,8 +20,25 @@ public class PutEvent<K,V> extends Event {
     @Override
     public String toString() {
         return "PutEvent{" +
-                "key=" + key +
+                "mapName='" + mapName + '\'' +
+                ", key=" + key +
                 ", value=" + value +
                 '}';
     }
+
+
+    public String getMapName() {
+        return mapName;
+    }
+
+
+    public K getKey() {
+        return key;
+    }
+
+
+    public V getValue() {
+        return value;
+    }
+
 }

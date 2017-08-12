@@ -9,14 +9,16 @@ import java.util.Map;
 
 public class DistributedHashTableImpl<K,V> implements  DistributedHashTable<K,V> {
 
+    private final String mapName;
     private final Map<K,V> internalMap;
     private final NetworkManager networkManager;
 
     private final Object lock;
 
-    public DistributedHashTableImpl(NetworkManager networkManager) {
+    public DistributedHashTableImpl(String mapName, NetworkManager networkManager) {
         this.networkManager = networkManager;
         this.internalMap = new HashMap<>();
+        this.mapName = mapName;
         lock = new Object();
     }
 
@@ -25,7 +27,16 @@ public class DistributedHashTableImpl<K,V> implements  DistributedHashTable<K,V>
 
         synchronized (lock){
             internalMap.put(key,value);
-            networkManager.propagate(new PutEvent(key,value));
+            networkManager.propagate(new PutEvent(this.mapName,key,value));
+        }
+
+    }
+
+    @Override
+    public void putLocal(K key, V value) {
+
+        synchronized (lock){
+            internalMap.put(key,value);
         }
 
     }
@@ -40,8 +51,15 @@ public class DistributedHashTableImpl<K,V> implements  DistributedHashTable<K,V>
 
         synchronized (lock){
             internalMap.remove(key);
-            networkManager.propagate(new RemoveEvent(key));
+            networkManager.propagate(new RemoveEvent(this.mapName, key));
         }
 
+    }
+
+    @Override
+    public void removeLocal(K key) {
+        synchronized (lock){
+            internalMap.remove(key);
+        }
     }
 }

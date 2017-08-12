@@ -2,9 +2,11 @@ package com.erkanerol.events;
 
 public class RemoveEvent<K> extends Event {
 
-    private K key;
+    private final String mapName;
+    private final K key;
 
-    public RemoveEvent(K key) {
+    public RemoveEvent(String mapName, K key) {
+        this.mapName = mapName;
         this.key = key;
     }
 
@@ -16,7 +18,17 @@ public class RemoveEvent<K> extends Event {
     @Override
     public String toString() {
         return "RemoveEvent{" +
-                "key=" + key +
+                "mapName='" + mapName + '\'' +
+                ", key=" + key +
                 '}';
     }
+
+    public String getMapName() {
+        return mapName;
+    }
+
+    public K getKey() {
+        return key;
+    }
+
 }
