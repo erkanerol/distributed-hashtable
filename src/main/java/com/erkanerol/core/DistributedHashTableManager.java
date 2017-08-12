@@ -12,7 +12,7 @@ public class DistributedHashTableManager {
     private Map<String,DistributedHashTable> allMaps;
 
     public DistributedHashTableManager(Config config) {
-        this.networkManager = new NetworkManager(config);
+        this.networkManager = new NetworkManager(this,config);
         allMaps = new HashMap<>();
     }
 
@@ -25,11 +25,16 @@ public class DistributedHashTableManager {
         DistributedHashTableImpl<K, V> newMap = (DistributedHashTableImpl<K, V>) allMaps.get(mapName);
 
         if (newMap == null){
-            newMap = new DistributedHashTableImpl<K,V>(this.networkManager);
-            allMaps.put(mapName, newMap);
+            newMap = creteNewMap(mapName);
             this.networkManager.propagate(new CreateEvent<K,V>(mapName));
         }
 
+        return newMap;
+    }
+
+    public <K, V> DistributedHashTableImpl<K, V> creteNewMap(String mapName) {
+        DistributedHashTableImpl<K, V> newMap = new DistributedHashTableImpl<K,V>(this.networkManager);
+        allMaps.put(mapName, newMap);
         return newMap;
     }
 

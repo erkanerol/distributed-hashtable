@@ -11,9 +11,11 @@ public class NetworkListener extends Thread {
 
     Logger logger = LoggerFactory.getLogger(NetworkListener.class);
 
+    private NetworkManager networkManager;
     private final ServerSocket serverSocket;
 
-    public NetworkListener(ServerSocket serverSocket) {
+    public NetworkListener(NetworkManager networkManager, ServerSocket serverSocket) {
+        this.networkManager = networkManager;
         this.serverSocket = serverSocket;
     }
 
@@ -26,12 +28,12 @@ public class NetworkListener extends Thread {
         while(true){
             try {
                 socket = serverSocket.accept();
-                logger.info("a connection is setup with",socket.getInetAddress());
+                logger.info("a connection is setup with {}",socket.getInetAddress());
             } catch (IOException e) {
                 logger.error("I/O error: ", e);
             }
 
-            new MessageProcessor(socket).start();
+            new MessageProcessor(this.networkManager,socket).start();
         }
     }
 

@@ -53,6 +53,14 @@ public class DistributedHashTableFactoryShould {
 
 
         DistributedHashTable<Long, String> map1 = manager1.getDistributedHashTable("userMap", Long.class, String.class);
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
         assertEquals("Erkan",map1.get(1l));
 
     }

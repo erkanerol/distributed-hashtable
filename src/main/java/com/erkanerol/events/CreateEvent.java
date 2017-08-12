@@ -13,4 +13,15 @@ public class CreateEvent<K,V> extends Event {
     public EventType getType() {
         return EventType.CREATE;
     }
+
+    @Override
+    public String toString() {
+        return "CreateEvent{" +
+                "mapName='" + mapName + '\'' +
+                '}';
+    }
+
+    public String getMapName() {
+        return mapName;
+    }
 }

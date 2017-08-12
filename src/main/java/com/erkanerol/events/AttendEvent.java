@@ -19,4 +19,8 @@ public class AttendEvent extends Event {
                 "port=" + port +
                 '}';
     }
+
+    public int getPort() {
+        return port;
+    }
 }

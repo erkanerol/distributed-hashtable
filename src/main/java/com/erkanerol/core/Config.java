@@ -2,6 +2,7 @@ package com.erkanerol.core;
 
 import com.erkanerol.network.Peer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Config {
@@ -11,6 +12,7 @@ public class Config {
 
     public Config(int port) {
         this.port = port;
+        this.peerList = new ArrayList<>();
     }
 
     public Config(int port, List<Peer> peerList) {

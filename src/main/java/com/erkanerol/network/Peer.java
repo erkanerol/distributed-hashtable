@@ -17,4 +17,12 @@ public class Peer {
     public int getPort() {
         return port;
     }
+
+    @Override
+    public String toString() {
+        return "Peer{" +
+                "hostname='" + hostname + '\'' +
+                ", port=" + port +
+                '}';
+    }
 }

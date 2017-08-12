@@ -5,17 +5,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class MessageProcessor extends Thread{
 
     Logger logger = LoggerFactory.getLogger(MessageProcessor.class);
 
+    private NetworkManager networkManager;
     private final Socket socket;
 
-    public MessageProcessor(Socket socket) {
+    public MessageProcessor(NetworkManager networkManager, Socket socket) {
+        this.networkManager = networkManager;
         this.socket = socket;
     }
 
@@ -25,14 +27,17 @@ public class MessageProcessor extends Thread{
         super.run();
 
         try {
-            InputStream stream = this.socket.getInputStream();
-            ObjectInputStream ois = new ObjectInputStream(stream);
+
+            logger.info("Message processing  is started: {} {}", socket.getInetAddress().getHostAddress(),socket.getPort());
+            ObjectOutputStream oos = new ObjectOutputStream(this.socket.getOutputStream());
+            ObjectInputStream ois = new ObjectInputStream(this.socket.getInputStream());
+            logger.info("Message is reading");
             Event event = (Event) ois.readObject();
             logger.info("Event is get:"+event.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            networkManager.processEvent (socket,event);
+            socket.close();
+        } catch (IOException | ClassNotFoundException e) {
+            logger.error("Exception in reading socket", e);
         }
     }
 
