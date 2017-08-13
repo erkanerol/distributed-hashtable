@@ -7,15 +7,18 @@ import java.util.List;
 
 public class Config {
 
-    int port;
+    private final int port;
+    private final String hostname;
     List<Peer> peerList;
 
-    public Config(int port) {
+    public Config(String hostname, int port) {
+        this.hostname = hostname;
         this.port = port;
         this.peerList = new ArrayList<>();
     }
 
-    public Config(int port, List<Peer> peerList) {
+    public Config(String hostname, int port, List<Peer> peerList) {
+        this.hostname = hostname;
         this.port = port;
         this.peerList = peerList;
     }
@@ -24,15 +27,11 @@ public class Config {
         return port;
     }
 
-    public void setPort(int port) {
-        this.port = port;
-    }
-
     public List<Peer> getPeerList() {
         return peerList;
     }
 
-    public void setPeerList(List<Peer> peerList) {
-        this.peerList = peerList;
+    public String getHostname() {
+        return hostname;
     }
 }

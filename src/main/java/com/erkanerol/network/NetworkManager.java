@@ -3,54 +3,71 @@ package com.erkanerol.network;
 import com.erkanerol.core.Config;
 import com.erkanerol.core.DistributedHashTable;
 import com.erkanerol.core.DistributedHashTableManager;
-import com.erkanerol.events.AttendEvent;
 import com.erkanerol.events.Event;
-import com.erkanerol.events.PutEvent;
-import com.erkanerol.events.RemoveEvent;
+import com.erkanerol.events.EventListener;
+import com.erkanerol.events.map.MapEvent;
+import com.erkanerol.events.network.AttendEvent;
+import com.erkanerol.events.network.LeaveEvent;
+import com.erkanerol.events.network.NetworkEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
+import java.util.Map;
 
-public class NetworkManager {
+public class NetworkManager implements EventListener{
 
-    Logger logger = LoggerFactory.getLogger(NetworkListener.class);
+    private static Logger logger = LoggerFactory.getLogger(NetworkManager.class);
 
 
-    private DistributedHashTableManager distributedHashTableManager;
     private final int port;
+    private final String hostname;
     private List<Peer> peerList;
+
+
+    private NetworkListener netWorkListener;
+    private DistributedHashTableManager distributedHashTableManager;
+
+
 
     public NetworkManager(DistributedHashTableManager distributedHashTableManager, Config config) {
         this.distributedHashTableManager = distributedHashTableManager;
+        this.hostname = config.getHostname();
         this.port = config.getPort();
         this.peerList = config.getPeerList();
     }
 
     public void open(){
-        ServerSocket serverSocket = null;
-        try {
-            logger.info("server socket is opening");
-            serverSocket = new ServerSocket(this.port);
-            logger.info("server socket is opened");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
         logger.info("network lister is starting");
-        new NetworkListener(this,serverSocket).start();
+        this.netWorkListener = new NetworkListener(this, this.port);
+        this.netWorkListener.start();
 
         logger.info("attend event is propagating");
-        propagate(new AttendEvent(this.port));
+
+        boolean isFirstPeer = true;
+        if (peerList != null) {
+            for (Peer peer : peerList){
+                boolean isSent = sendEventToPeer(peer,new AttendEvent(this.hostname, this.port,isFirstPeer));
+                if (isSent){
+                    isFirstPeer = false;
+                }
+            }
+        }
     }
 
 
-    public void propagate(Event event) {
+    public void close() {
+        this.netWorkListener.shutdown();
+
+        logger.info("leave event is propagating");
+        propagate(new LeaveEvent(this.hostname, this.port));
+    }
+
+    public synchronized void propagate(Event event) {
 
         if (peerList != null) {
             for (Peer peer : peerList){
@@ -60,7 +77,49 @@ public class NetworkManager {
 
     }
 
-    private void sendEventToPeer(Peer peer, Event event) {
+
+
+    @Override
+    public synchronized void processEvent(Socket socket, Event event) {
+        if (event instanceof MapEvent){
+            distributedHashTableManager.handleMapEvent((MapEvent) event);
+        }else {
+            processNetworkEvent(socket, (NetworkEvent) event);
+        }
+    }
+
+    private void processNetworkEvent(Socket socket, NetworkEvent networkEvent) {
+        if (networkEvent instanceof AttendEvent){
+            AttendEvent attendEvent = (AttendEvent) networkEvent;
+            Peer peer = new Peer(attendEvent.getHostname() ,attendEvent.getPort());
+            this.peerList.add(peer);
+
+            if (attendEvent.isInitialStateRequest()){
+                writeAllStateToSocket(socket);
+            }
+            logger.info("New peer is added {}",peer);
+        } else if (networkEvent instanceof LeaveEvent){
+            LeaveEvent leaveEvent = (LeaveEvent) networkEvent;
+            Peer peer = new Peer(leaveEvent.getHostname() ,leaveEvent.getPort());
+            logger.info("A peer is gonna leave. size: {}",this.peerList.size());
+            this.peerList.remove(peer);
+            logger.info("A peer is leaved {}  new size:{}",peer, this.peerList.size());
+        }
+    }
+
+    private void writeAllStateToSocket(Socket socket) {
+
+        try {
+            Map<String, DistributedHashTable> maps = distributedHashTableManager.exportMaps();
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            out.writeObject(maps);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private boolean sendEventToPeer(Peer peer, Event event) {
         Socket socket = null;
         try {
             logger.info("Event: {} is sending to peer: {}",event, peer);
@@ -68,30 +127,26 @@ public class NetworkManager {
 
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             out.writeObject(event);
+
+            if (event instanceof  AttendEvent){
+                AttendEvent attendEvent = (AttendEvent) event;
+                if (attendEvent.isInitialStateRequest()){
+                    ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+                    Map<String, DistributedHashTable> maps  = (Map<String, DistributedHashTable>) ois.readObject();
+                    distributedHashTableManager.importMaps(maps);
+                    socket.close();
+                }
+            }
             logger.info("Socket is closing.");
+            return true;
         } catch (IOException e) {
-            logger.error("Exception in sending event to peer");
+            logger.info("The message cannot be sent. The node may be leaved.");
+            return false;
+        } catch (ClassNotFoundException e) {
+            logger.error("Unexpected error");
+            return false;
         }
 
     }
 
-
-    public void processEvent(Socket socket, Event event) {
-        if (event instanceof AttendEvent){
-            AttendEvent attendEvent = (AttendEvent) event;
-            Peer peer = new Peer(socket.getInetAddress().getHostAddress(),attendEvent.getPort());
-            this.peerList.add(peer);
-            logger.info("New peer is added {}",peer);
-        } else if (event instanceof PutEvent){
-            PutEvent putEvent = (PutEvent) event;
-            DistributedHashTable<Object, Object> map = this.distributedHashTableManager.getDistributedHashTable(putEvent.getMapName());
-            map.putLocal(putEvent.getKey(),putEvent.getValue());
-            logger.info("Put event is prossed",putEvent);
-        } else if (event instanceof RemoveEvent){
-            RemoveEvent removeEvent = (RemoveEvent) event;
-            DistributedHashTable<Object, Object> map = this.distributedHashTableManager.getDistributedHashTable(removeEvent.getMapName());
-            map.removeLocal(removeEvent.getKey());
-            logger.info("Remove event is prossed",removeEvent);
-        }
-    }
 }

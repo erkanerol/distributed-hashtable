@@ -4,7 +4,5 @@ public enum EventType {
 
     ATTEND, LEAVE,
 
-    CREATE, DELETE,
-
     PUT, REMOVE,
 }

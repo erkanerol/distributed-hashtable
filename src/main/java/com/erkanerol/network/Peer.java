@@ -25,4 +25,22 @@ public class Peer {
                 ", port=" + port +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Peer peer = (Peer) o;
+
+        if (port != peer.port) return false;
+        return hostname != null ? hostname.equals(peer.hostname) : peer.hostname == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = hostname != null ? hostname.hashCode() : 0;
+        result = 31 * result + port;
+        return result;
+    }
 }

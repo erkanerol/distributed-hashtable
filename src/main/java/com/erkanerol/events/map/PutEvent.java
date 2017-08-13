@@ -1,6 +1,8 @@
-package com.erkanerol.events;
+package com.erkanerol.events.map;
 
-public class PutEvent<K,V> extends Event {
+import com.erkanerol.events.EventType;
+
+public class PutEvent<K,V> extends MapEvent {
 
     private final String mapName;
     private final K key;

@@ -1,6 +1,8 @@
-package com.erkanerol.events;
+package com.erkanerol.events.map;
 
-public class RemoveEvent<K> extends Event {
+import com.erkanerol.events.EventType;
+
+public class RemoveEvent<K> extends MapEvent {
 
     private final String mapName;
     private final K key;
