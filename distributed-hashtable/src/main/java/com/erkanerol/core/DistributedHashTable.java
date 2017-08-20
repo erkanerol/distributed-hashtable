@@ -35,7 +35,7 @@ public class DistributedHashTable<K,V> implements Serializable{
 
     }
 
-    public void putLocal(K key, V value) {
+    protected void putLocal(K key, V value) {
 
         synchronized (this){
             internalMap.put(key,value);
@@ -58,7 +58,7 @@ public class DistributedHashTable<K,V> implements Serializable{
 
     }
 
-    public void removeLocal(K key) {
+    protected void removeLocal(K key) {
         synchronized (this){
             internalMap.remove(key);
         }
