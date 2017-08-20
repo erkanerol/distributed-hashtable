@@ -13,9 +13,9 @@ import java.util.List;
 
 public class ConfigBuilder {
 
-    private static final int DEFAULT_PORT = 9878;
-    private static final String DEFAULT_HOSTNAME = "localhost";
-    private static final int DEFAULT_POOL_SIZE = 10;
+    public static final int DEFAULT_PORT = 9878;
+    public static final String DEFAULT_HOSTNAME = "localhost";
+    public static final int DEFAULT_POOL_SIZE = 10;
 
     private int port;
     private String hostname;

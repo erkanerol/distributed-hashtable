@@ -25,18 +25,36 @@ public class DistributedHashTable<K, V> implements Serializable {
     private final Map<K, V> internalTable;
     private transient final TableEventListener listener;
 
+    /**
+     * constructor used in table creation
+     *
+     * @param tableName the name of the table
+     * @param listener the listener for events
+     */
     public DistributedHashTable(String tableName, TableEventListener listener) {
         this.listener = listener;
         this.internalTable = new Hashtable<>();
         this.tableName = tableName;
     }
 
+    /**
+     * copy constructor used by nodes that attends the network later
+     * to transfer the table as an object
+     * @param mapCopy the object to copy
+     * @param listener the listener of the new instance
+     */
     public DistributedHashTable(DistributedHashTable mapCopy, TableEventListener listener) {
         this.tableName = mapCopy.tableName;
         this.internalTable = mapCopy.internalTable;
         this.listener = listener;
     }
 
+
+    /**
+     * puts an entry and calls the listener for event propagation
+     * @param key the key of the entry
+     * @param value the value of the entry
+     */
     public void put(K key, V value) {
         logger.debug("PUT table:{} key:{} value:{}", tableName, key, value);
         synchronized (this) {
@@ -46,6 +64,12 @@ public class DistributedHashTable<K, V> implements Serializable {
 
     }
 
+    /**
+     * puts an entry without propagating an event in the network.
+     * used in processing an event received from another peer
+     * @param key the key of the entry
+     * @param value the value of the entry
+     */
     protected void putLocal(K key, V value) {
         logger.debug("PUT LOCAL table:{} key:{} value:{}", tableName, key, value);
         synchronized (this) {
@@ -54,13 +78,21 @@ public class DistributedHashTable<K, V> implements Serializable {
 
     }
 
-
+    /**
+     * gets the entry from table
+     * @param key the key of the element
+     * @return
+     */
     public V get(K key) {
         logger.debug("GET table:{} key:{} value:{}", tableName, key);
         return internalTable.get(key);
     }
 
 
+    /**
+     * removes an entry and calls the listener for event propagation
+     * @param key
+     */
     public void remove(K key) {
         logger.debug("REMOVE table:{} key:{} value:{}", tableName, key);
         synchronized (this) {
@@ -70,6 +102,11 @@ public class DistributedHashTable<K, V> implements Serializable {
 
     }
 
+    /**
+     * removes an entry without propagating an event in the network.
+     * used in processing an event received from another peer
+     * @param key
+     */
     protected void removeLocal(K key) {
         logger.debug("REMOVE LOCAL table:{} key:{} value:{}", tableName, key);
         synchronized (this) {
@@ -77,6 +114,9 @@ public class DistributedHashTable<K, V> implements Serializable {
         }
     }
 
+    /**
+     * prints the content of the table with logger in trace level
+     */
     protected void printContent() {
         for (Map.Entry entry : internalTable.entrySet()) {
             logger.trace("Table:{},  Key:{}  Value:{}" + tableName, entry.getKey(), entry.getValue());

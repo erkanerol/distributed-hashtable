@@ -19,6 +19,9 @@ import java.net.Socket;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * a manager class that coordinates all components about network
+ */
 public class NetworkManager implements EventListener {
 
     private static Logger logger = LoggerFactory.getLogger(NetworkManager.class);
@@ -33,6 +36,11 @@ public class NetworkManager implements EventListener {
     private DistributedHashTableManager distributedHashTableManager;
 
 
+    /**
+     *
+     * @param distributedHashTableManager
+     * @param config
+     */
     public NetworkManager(DistributedHashTableManager distributedHashTableManager, Config config) {
         this.distributedHashTableManager = distributedHashTableManager;
         this.hostname = config.getHostname();
@@ -41,6 +49,10 @@ public class NetworkManager implements EventListener {
         this.poolSize = config.getPoolSize();
     }
 
+    /**
+     * opens the network listener, sends attend event to other nodes and gets initial state from other nodes
+     *
+     */
     public void open() {
         logger.info("network lister is starting");
         this.netWorkListener = new NetworkListener(this, this.port, this.poolSize);
@@ -59,7 +71,9 @@ public class NetworkManager implements EventListener {
         }
     }
 
-
+    /**
+     * closes the network listener, sends leave event to other nodes
+     */
     public void close() {
         this.netWorkListener.shutdown();
 
@@ -67,6 +81,10 @@ public class NetworkManager implements EventListener {
         propagate(new LeaveEvent(this.hostname, this.port));
     }
 
+    /**
+     * sends an event to other nodes
+     * @param event the event that is going to be sent
+     */
     public synchronized void propagate(Event event) {
 
         if (peerList != null) {
@@ -77,7 +95,11 @@ public class NetworkManager implements EventListener {
 
     }
 
-
+    /**
+     * handles an event and write response to socket if necessary
+     * @param socket the socket that the response will be written
+     * @param event the event that will be handled
+     */
     @Override
     public synchronized void processEvent(Socket socket, Event event) {
         if (event instanceof TableEvent) {
@@ -87,6 +109,11 @@ public class NetworkManager implements EventListener {
         }
     }
 
+    /**
+     * handles network event an write response to socket if necessary
+     * @param socket the socket that the response will be written
+     * @param networkEvent the event that will be handled
+     */
     private void processNetworkEvent(Socket socket, NetworkEvent networkEvent) {
         if (networkEvent instanceof AttendEvent) {
             AttendEvent attendEvent = (AttendEvent) networkEvent;
@@ -106,6 +133,10 @@ public class NetworkManager implements EventListener {
         }
     }
 
+    /**
+     * exports all tables from manager and writes them into socket
+     * @param socket the socket that the response will be written
+     */
     private void writeAllStateToSocket(Socket socket) {
 
         try {
@@ -118,6 +149,11 @@ public class NetworkManager implements EventListener {
 
     }
 
+    /**
+     * sends an event to a peer and reads the response if necessary
+     * @param peer the peer that the event will be sent
+     * @param event the event that will be sent
+     */
     private boolean sendEventToPeer(Peer peer, Event event) {
         Socket socket = null;
         try {

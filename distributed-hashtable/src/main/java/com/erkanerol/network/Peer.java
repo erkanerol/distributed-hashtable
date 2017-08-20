@@ -1,10 +1,18 @@
 package com.erkanerol.network;
 
+/**
+ * a class used to represent an instance of the manager in the network
+ */
 public class Peer {
 
     private final String hostname;
     private final int port;
 
+    /**
+     *
+     * @param hostname hostname that the peer listens
+     * @param port port that the peer listens
+     */
     public Peer(String hostname, int port) {
         this.hostname = hostname;
         this.port = port;

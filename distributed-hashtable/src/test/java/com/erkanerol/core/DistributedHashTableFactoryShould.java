@@ -10,8 +10,7 @@ public class DistributedHashTableFactoryShould {
 
     @Test
     public void createNewInstance() {
-        Config config = ConfigBuilder.builder().createConfig();
-        DistributedHashTableManager manager = DistributedHashTableManagerFactory.createNewInstance(config);
+        DistributedHashTableManager manager = DistributedHashTableManagerFactory.createNewInstance();
         assertNotNull(manager);
         manager.shutDown();
     }
@@ -19,8 +18,7 @@ public class DistributedHashTableFactoryShould {
 
     @Test
     public void createNewMap() {
-        Config config = ConfigBuilder.builder().createConfig();
-        DistributedHashTableManager manager = DistributedHashTableManagerFactory.createNewInstance(config);
+        DistributedHashTableManager manager = DistributedHashTableManagerFactory.createNewInstance();
         DistributedHashTable<Long, String> dht = manager.getDistributedHashTable("usermap");
         dht.put(1l, "Erkan");
         assertEquals("Erkan", dht.get(1l));
@@ -31,12 +29,11 @@ public class DistributedHashTableFactoryShould {
 
     @Test
     public void putGet() {
-        Config config1 = ConfigBuilder.builder().createConfig();
-        Config config2 = ConfigBuilder.builder().setPort(9879)
-                .addPeer(new Peer("localhost", 9878))
+        Config config2 = ConfigBuilder.builder().setPort(ConfigBuilder.DEFAULT_PORT+1)
+                .addPeer(new Peer(ConfigBuilder.DEFAULT_HOSTNAME, ConfigBuilder.DEFAULT_PORT))
                 .createConfig();
 
-        DistributedHashTableManager manager1 = DistributedHashTableManagerFactory.createNewInstance(config1);
+        DistributedHashTableManager manager1 = DistributedHashTableManagerFactory.createNewInstance();
         DistributedHashTableManager manager2 = DistributedHashTableManagerFactory.createNewInstance(config2);
 
 
@@ -61,13 +58,12 @@ public class DistributedHashTableFactoryShould {
 
     @Test
     public void attend() {
-        Config config1 = ConfigBuilder.builder().createConfig();
-        Config config2 = ConfigBuilder.builder().setPort(9879)
-                .addPeer(new Peer("localhost", 9878))
+        Config config2 = ConfigBuilder.builder().setPort(ConfigBuilder.DEFAULT_PORT+1)
+                .addPeer(new Peer(ConfigBuilder.DEFAULT_HOSTNAME, ConfigBuilder.DEFAULT_PORT))
                 .createConfig();
 
 
-        DistributedHashTableManager manager1 = DistributedHashTableManagerFactory.createNewInstance(config1);
+        DistributedHashTableManager manager1 = DistributedHashTableManagerFactory.createNewInstance();
         DistributedHashTable<Long, String> map1 = manager1.getDistributedHashTable("userMap");
         map1.put(1l, "Erkan");
 
@@ -89,17 +85,16 @@ public class DistributedHashTableFactoryShould {
 
     @Test
     public void putGetRemove() {
-        Config config1 = ConfigBuilder.builder().createConfig();
-        Config config2 = ConfigBuilder.builder().setPort(9879)
-                .addPeer(new Peer("localhost", 9878))
+        Config config2 = ConfigBuilder.builder().setPort(ConfigBuilder.DEFAULT_PORT+1)
+                .addPeer(new Peer(ConfigBuilder.DEFAULT_HOSTNAME, ConfigBuilder.DEFAULT_PORT))
                 .createConfig();
 
-        Config config3 = ConfigBuilder.builder().setPort(9880)
-                .addPeer(new Peer("localhost", 9878))
-                .addPeer(new Peer("localhost", 9879))
+        Config config3 = ConfigBuilder.builder().setPort(ConfigBuilder.DEFAULT_PORT+2)
+                .addPeer(new Peer(ConfigBuilder.DEFAULT_HOSTNAME, ConfigBuilder.DEFAULT_PORT))
+                .addPeer(new Peer(ConfigBuilder.DEFAULT_HOSTNAME, ConfigBuilder.DEFAULT_PORT+1))
                 .createConfig();
 
-        DistributedHashTableManager manager1 = DistributedHashTableManagerFactory.createNewInstance(config1);
+        DistributedHashTableManager manager1 = DistributedHashTableManagerFactory.createNewInstance();
         DistributedHashTableManager manager2 = DistributedHashTableManagerFactory.createNewInstance(config2);
 
 

@@ -10,9 +10,12 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * thread that listens a server socket and create new threads for incoming messages
+ */
 public class NetworkListener extends Thread {
 
-    Logger logger = LoggerFactory.getLogger(NetworkListener.class);
+    private static Logger logger = LoggerFactory.getLogger(NetworkListener.class);
 
     private EventListener eventListener;
     private final ServerSocket serverSocket;
@@ -20,6 +23,12 @@ public class NetworkListener extends Thread {
 
     private final ExecutorService executor;
 
+    /**
+     *
+     * @param eventListener the event listener for events read from socket
+     * @param port the port of the server socket
+     * @param poolSize the pool size of {@link MessageProcessor}
+     */
     public NetworkListener(EventListener eventListener, int port, int poolSize) {
         this.eventListener = eventListener;
 
@@ -35,6 +44,9 @@ public class NetworkListener extends Thread {
         executor = Executors.newFixedThreadPool(poolSize);
     }
 
+    /**
+     * listens server socket continuously and start a new {@link MessageProcessor} for each request
+     */
     @Override
     public void run() {
         super.run();
@@ -56,6 +68,9 @@ public class NetworkListener extends Thread {
         }
     }
 
+    /**
+     * closes the server socket
+     */
     public void shutdown() {
         try {
             logger.info("Server socket is closing");
