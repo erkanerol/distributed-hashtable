@@ -11,6 +11,6 @@ https://erkanerol.github.io/distributed-hashtable/
 
 https://github.com/erkanerol/distributed-hashtable/tree/master/cache-example
 
-### counter example with this library
+### counter example with this library
 
 https://github.com/erkanerol/distributed-hashtable/tree/master/counter-example
