@@ -5,8 +5,8 @@ A distributed hashtable implementation library where developers can use in order
 
 ### Documentation
 
-
+https://erkanerol.github.io/distributed-hashtable/
 
 ### Example Usage
 
-For example usage, go to 
+https://github.com/erkanerol/distributed-hashtable/tree/master/cache-example
