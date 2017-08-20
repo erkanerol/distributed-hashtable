@@ -10,17 +10,13 @@ public class Config {
     private final int port;
     private final String hostname;
     List<Peer> peerList;
+    private final int poolSize;
 
-    public Config(String hostname, int port) {
-        this.hostname = hostname;
-        this.port = port;
-        this.peerList = new ArrayList<>();
-    }
-
-    public Config(String hostname, int port, List<Peer> peerList) {
+    public Config(String hostname, int port, List<Peer> peerList, int poolSize) {
         this.hostname = hostname;
         this.port = port;
         this.peerList = peerList;
+        this.poolSize = poolSize;
     }
 
     public int getPort() {
@@ -35,4 +31,7 @@ public class Config {
         return hostname;
     }
 
+    public int getPoolSize() {
+        return poolSize;
+    }
 }

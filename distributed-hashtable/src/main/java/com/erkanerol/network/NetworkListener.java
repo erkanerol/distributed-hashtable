@@ -7,6 +7,9 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class NetworkListener extends Thread {
 
@@ -16,17 +19,21 @@ public class NetworkListener extends Thread {
     private final ServerSocket serverSocket;
     private volatile boolean isRunning = false;
 
-    public NetworkListener(EventListener eventListener, int port) {
+    private final ExecutorService executor;
+
+    public NetworkListener(EventListener eventListener, int port, int poolSize) {
         this.eventListener = eventListener;
 
         try {
-            logger.info("server socket is opening");
+            logger.debug("server socket is opening. Port:{}",port);
             this.serverSocket = new ServerSocket(port);
-            logger.info("server socket is opened");
+            logger.info("server socket is opened. Port:{}",port);
         } catch (IOException e) {
             logger.error("I/O exception in server socket opening",e);
             throw new NetworkException("I/O exception in server socket opening",e);
         }
+
+        executor = Executors.newFixedThreadPool(poolSize);
     }
 
     @Override
@@ -39,7 +46,7 @@ public class NetworkListener extends Thread {
             try {
                 socket = serverSocket.accept();
                 logger.info("a connection is setup with {}",socket.getInetAddress());
-                new MessageProcessor(this.eventListener,socket).start();
+                executor.submit(new MessageProcessor(this.eventListener,socket));
             } catch (IOException e) {
                 if (isRunning){
                     logger.error("I/O error: ", e);

@@ -27,7 +27,7 @@ public class NetworkManager implements EventListener{
     private final int port;
     private final String hostname;
     private List<Peer> peerList;
-
+    private int poolSize;
 
     private NetworkListener netWorkListener;
     private DistributedHashTableManager distributedHashTableManager;
@@ -39,11 +39,12 @@ public class NetworkManager implements EventListener{
         this.hostname = config.getHostname();
         this.port = config.getPort();
         this.peerList = config.getPeerList();
+        this.poolSize = config.getPoolSize();
     }
 
     public void open(){
         logger.info("network lister is starting");
-        this.netWorkListener = new NetworkListener(this, this.port);
+        this.netWorkListener = new NetworkListener(this, this.port, this.poolSize);
         this.netWorkListener.start();
 
         logger.info("attend event is propagating");

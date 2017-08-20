@@ -15,7 +15,7 @@ public class DistributedHashTableFactoryShould {
 
     @Test
     public void createNewInstance(){
-        Config config = new Config("127.0.0.1",9876);
+        Config config = ConfigBuilder.builder().createConfig();
         DistributedHashTableManager manager = DistributedHashTableManagerFactory.createNewInstance(config);
         assertNotNull(manager);
         manager.shutDown();
@@ -24,7 +24,7 @@ public class DistributedHashTableFactoryShould {
 
     @Test
     public void createNewMap(){
-        Config config = new Config("127.0.0.1",9876);
+        Config config = ConfigBuilder.builder().createConfig();
         DistributedHashTableManager manager = DistributedHashTableManagerFactory.createNewInstance(config);
         DistributedHashTable<Long,String> dht = manager.getDistributedHashTable("usermap");
         dht.put(1l,"Erkan");
@@ -36,14 +36,10 @@ public class DistributedHashTableFactoryShould {
 
     @Test
     public void putGet(){
-        Config config1 = new Config("127.0.0.1",9876);
-
-
-        Peer peer1 = new Peer("127.0.0.1",9876);
-        List<Peer> peerList1 = new ArrayList<>();
-        peerList1.add(peer1);
-
-        Config config2 = new Config("127.0.0.1",9877,peerList1);
+        Config config1 = ConfigBuilder.builder().createConfig();
+        Config config2 = ConfigBuilder.builder().setPort(9879)
+                                                .addPeer(new Peer("localhost",9878))
+                                                .createConfig();
 
         DistributedHashTableManager manager1 = DistributedHashTableManagerFactory.createNewInstance(config1);
         DistributedHashTableManager manager2 = DistributedHashTableManagerFactory.createNewInstance(config2);
@@ -70,14 +66,11 @@ public class DistributedHashTableFactoryShould {
 
     @Test
     public void attend(){
-        Config config1 = new Config("127.0.0.1",9876);
+        Config config1 = ConfigBuilder.builder().createConfig();
+        Config config2 = ConfigBuilder.builder().setPort(9879)
+                                                .addPeer(new Peer("localhost",9878))
+                                                .createConfig();
 
-
-        Peer peer1 = new Peer("127.0.0.1",9876);
-        List<Peer> peerList1 = new ArrayList<>();
-        peerList1.add(peer1);
-
-        Config config2 = new Config("127.0.0.1",9877,peerList1);
 
         DistributedHashTableManager manager1 = DistributedHashTableManagerFactory.createNewInstance(config1);
         DistributedHashTable<Long, String> map1 = manager1.getDistributedHashTable("userMap");
@@ -101,20 +94,15 @@ public class DistributedHashTableFactoryShould {
 
     @Test
     public void putGetRemove(){
-        Config config1 = new Config("127.0.0.1",9876);
+        Config config1 = ConfigBuilder.builder().createConfig();
+        Config config2 = ConfigBuilder.builder().setPort(9879)
+                .addPeer(new Peer("localhost",9878))
+                .createConfig();
 
-
-        Peer peer1 = new Peer("127.0.0.1",9876);
-        Peer peer2 = new Peer("127.0.0.1",9877);
-        List<Peer> peerList1 = new ArrayList<>();
-        peerList1.add(peer1);
-
-        List<Peer> peerList2 = new ArrayList<>();
-        peerList2.add(peer1);
-        peerList2.add(peer2);
-
-        Config config2 = new Config("127.0.0.1",9877,peerList1);
-        Config config3 = new Config("127.0.0.1",9878,peerList2);
+        Config config3 = ConfigBuilder.builder().setPort(9880)
+                .addPeer(new Peer("localhost",9878))
+                .addPeer(new Peer("localhost",9879))
+                .createConfig();
 
         DistributedHashTableManager manager1 = DistributedHashTableManagerFactory.createNewInstance(config1);
         DistributedHashTableManager manager2 = DistributedHashTableManagerFactory.createNewInstance(config2);
@@ -129,7 +117,7 @@ public class DistributedHashTableFactoryShould {
         DistributedHashTable<Long, String> map1 = manager1.getDistributedHashTable("userMap");
 
         try {
-            Thread.sleep(10000);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -146,7 +134,7 @@ public class DistributedHashTableFactoryShould {
 
 
         try {
-            Thread.sleep(10000);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

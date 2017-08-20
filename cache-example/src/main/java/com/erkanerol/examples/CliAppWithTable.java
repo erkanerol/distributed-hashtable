@@ -1,13 +1,8 @@
 package com.erkanerol.examples;
 
-import com.erkanerol.core.Config;
-import com.erkanerol.core.DistributedHashTable;
-import com.erkanerol.core.DistributedHashTableManager;
-import com.erkanerol.core.DistributedHashTableManagerFactory;
+import com.erkanerol.core.*;
 import com.erkanerol.network.Peer;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 
@@ -52,21 +47,21 @@ public class CliAppWithTable {
     }
 
     private static Config getConfigsFromArguments(String[] args) {
-        String hostname = args[0];
-        int port = Integer.parseInt(args[1]);
+
+        ConfigBuilder builder = ConfigBuilder.builder();
+
+        if (args.length > 1){
+            builder.setHostName(args[0]);
+            builder.setPort(Integer.parseInt(args[1]));
+        }
 
         // add peers to config
-        if(args.length > 2){
-            List<Peer> peerList = new ArrayList<>();
-
+        if(args.length > 3){
             for (int i=2; i<args.length; i=i+2){
-                Peer peer = new Peer(args[i],Integer.parseInt(args[i+1]));
-                peerList.add(peer);
+                builder.addPeer(new Peer(args[i],Integer.parseInt(args[i+1])));
             }
-
-            return new Config(hostname,port,peerList);
-        }else {
-            return new Config(hostname,port);
         }
+
+        return builder.createConfig();
     }
 }
