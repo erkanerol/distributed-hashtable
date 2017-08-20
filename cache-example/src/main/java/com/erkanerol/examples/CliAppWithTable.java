@@ -19,6 +19,7 @@ public class CliAppWithTable {
             System.out.println("PLEASE ENTER NEXT COMMAND");
             System.out.println("***** GET key");
             System.out.println("***** PUT key value");
+            System.out.println("***** REMOVE key");
             System.out.println("***** EXIT");
 
 
@@ -36,8 +37,14 @@ public class CliAppWithTable {
                     restCache.put(key2, value);
                     System.out.println("The value is put");
                     break;
+                case "REMOVE":
+                    String key3 = scanner.next();
+                    restCache.remove(key3);
+                    System.out.println("The value is removed");
+                    break;
                 case "EXIT":
                     manager.shutDown();
+                    System.out.println("Manager is closed");
                     break commandLoop;
                 default:
                     System.out.println("UNDEFINED COMMAND");

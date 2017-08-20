@@ -54,7 +54,12 @@ public class NetworkManager implements EventListener {
      *
      */
     public void open() {
-        logger.info("network lister is starting");
+
+        if (this.netWorkListener != null && this.netWorkListener.isRunning()) {
+            throw new NetworkException("Network Manager is already opened");
+        }
+
+        logger.info("network listener is starting");
         this.netWorkListener = new NetworkListener(this, this.port, this.poolSize);
         this.netWorkListener.start();
 
@@ -75,6 +80,11 @@ public class NetworkManager implements EventListener {
      * closes the network listener, sends leave event to other nodes
      */
     public void close() {
+
+        if (this.netWorkListener == null || !this.netWorkListener.isRunning()) {
+            throw new NetworkException("Network Manager is not running");
+        }
+
         this.netWorkListener.shutdown();
 
         logger.info("leave event is propagating");
@@ -157,7 +167,7 @@ public class NetworkManager implements EventListener {
     private boolean sendEventToPeer(Peer peer, Event event) {
         Socket socket = null;
         try {
-            logger.info("Event: {} is sending to peer: {}", event, peer);
+            logger.debug("Event: {} is sending to peer: {}", event, peer);
             socket = new Socket(peer.getHostname(), peer.getPort());
 
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
@@ -169,10 +179,10 @@ public class NetworkManager implements EventListener {
                     ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
                     Map<String, DistributedHashTable> maps = (Map<String, DistributedHashTable>) ois.readObject();
                     distributedHashTableManager.importTables(maps);
-                    socket.close();
                 }
             }
-            logger.info("Socket is closing.");
+            socket.close();
+            logger.debug("Socket is closing.");
             return true;
         } catch (IOException e) {
             logger.info("The message cannot be sent. The node may be leaved.");

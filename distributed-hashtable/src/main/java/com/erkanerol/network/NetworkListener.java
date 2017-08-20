@@ -76,8 +76,13 @@ public class NetworkListener extends Thread {
             logger.info("Server socket is closing");
             isRunning = false;
             serverSocket.close();
+            executor.shutdown();
         } catch (IOException e) {
             logger.error("Server socket cannot be closed", e);
         }
+    }
+
+    public boolean isRunning() {
+        return isRunning;
     }
 }

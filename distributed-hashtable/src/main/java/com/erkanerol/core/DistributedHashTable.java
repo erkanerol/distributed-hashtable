@@ -94,7 +94,7 @@ public class DistributedHashTable<K, V> implements Serializable {
      * @param key
      */
     public void remove(K key) {
-        logger.debug("REMOVE table:{} key:{} value:{}", tableName, key);
+        logger.debug("REMOVE table:{} key:{}", tableName, key);
         synchronized (this) {
             internalTable.remove(key);
             listener.processTableEvent(new RemoveEvent(this.tableName, key));
@@ -108,7 +108,7 @@ public class DistributedHashTable<K, V> implements Serializable {
      * @param key
      */
     protected void removeLocal(K key) {
-        logger.debug("REMOVE LOCAL table:{} key:{} value:{}", tableName, key);
+        logger.debug("REMOVE LOCAL table:{} key:{}", tableName, key);
         synchronized (this) {
             internalTable.remove(key);
         }

@@ -49,6 +49,7 @@ public class MessageProcessor extends Thread {
         } catch (IOException | ClassNotFoundException e) {
             logger.error("Exception in reading socket", e);
         }
+        logger.info("run ends");
     }
 
 }

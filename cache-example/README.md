@@ -22,7 +22,7 @@ change directory to ./cache-example
 
 start example in two jvm
 
-    `console1> mvn exec:java -Dexec.args="localhost 9878"`
+    `console1> mvn exec:java`
     
     `console2> mvn exec:java -Dexec.args="localhost 9879 localhost 9878"`
 
