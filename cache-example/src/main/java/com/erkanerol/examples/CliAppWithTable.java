@@ -11,10 +11,11 @@ public class CliAppWithTable {
     public static void main(String[] args) throws Exception {
         Config config = getConfigsFromArguments(args);
         DistributedHashTableManager manager = DistributedHashTableManagerFactory.createNewInstance(config);
-        DistributedHashTable<String,String> restCache = manager.getDistributedHashTable("restCache");
+        DistributedHashTable<String, String> restCache = manager.getDistributedHashTable("restCache");
 
 
-        commandLoop: while (true){
+        commandLoop:
+        while (true) {
             System.out.println("PLEASE ENTER NEXT COMMAND");
             System.out.println("***** GET key");
             System.out.println("***** PUT key value");
@@ -24,7 +25,7 @@ public class CliAppWithTable {
             Scanner scanner = new Scanner(System.in);
             String command = scanner.next().toUpperCase();
 
-            switch (command){
+            switch (command) {
                 case "GET":
                     String key = scanner.next();
                     System.out.println(restCache.get(key));
@@ -32,7 +33,7 @@ public class CliAppWithTable {
                 case "PUT":
                     String key2 = scanner.next();
                     String value = scanner.next();
-                    restCache.put(key2,value);
+                    restCache.put(key2, value);
                     System.out.println("The value is put");
                     break;
                 case "EXIT":
@@ -50,15 +51,15 @@ public class CliAppWithTable {
 
         ConfigBuilder builder = ConfigBuilder.builder();
 
-        if (args.length > 1){
+        if (args.length > 1) {
             builder.setHostName(args[0]);
             builder.setPort(Integer.parseInt(args[1]));
         }
 
         // add peers to config
-        if(args.length > 3){
-            for (int i=2; i<args.length; i=i+2){
-                builder.addPeer(new Peer(args[i],Integer.parseInt(args[i+1])));
+        if (args.length > 3) {
+            for (int i = 2; i < args.length; i = i + 2) {
+                builder.addPeer(new Peer(args[i], Integer.parseInt(args[i + 1])));
             }
         }
 

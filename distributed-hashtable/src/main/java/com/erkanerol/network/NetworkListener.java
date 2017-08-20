@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -25,12 +24,12 @@ public class NetworkListener extends Thread {
         this.eventListener = eventListener;
 
         try {
-            logger.debug("server socket is opening. Port:{}",port);
+            logger.debug("server socket is opening. Port:{}", port);
             this.serverSocket = new ServerSocket(port);
-            logger.info("server socket is opened. Port:{}",port);
+            logger.info("server socket is opened. Port:{}", port);
         } catch (IOException e) {
-            logger.error("I/O exception in server socket opening",e);
-            throw new NetworkException("I/O exception in server socket opening",e);
+            logger.error("I/O exception in server socket opening", e);
+            throw new NetworkException("I/O exception in server socket opening", e);
         }
 
         executor = Executors.newFixedThreadPool(poolSize);
@@ -42,15 +41,15 @@ public class NetworkListener extends Thread {
         isRunning = true;
         logger.info("network listening is starting");
         Socket socket = null;
-        while(isRunning){
+        while (isRunning) {
             try {
                 socket = serverSocket.accept();
-                logger.info("a connection is setup with {}",socket.getInetAddress());
-                executor.submit(new MessageProcessor(this.eventListener,socket));
+                logger.info("a connection is setup with {}", socket.getInetAddress());
+                executor.submit(new MessageProcessor(this.eventListener, socket));
             } catch (IOException e) {
-                if (isRunning){
+                if (isRunning) {
                     logger.error("I/O error: ", e);
-                }else {
+                } else {
                     logger.info("Socket is closed");
                 }
             }
@@ -63,7 +62,7 @@ public class NetworkListener extends Thread {
             isRunning = false;
             serverSocket.close();
         } catch (IOException e) {
-            logger.error("Server socket cannot be closed",e);
+            logger.error("Server socket cannot be closed", e);
         }
     }
 }

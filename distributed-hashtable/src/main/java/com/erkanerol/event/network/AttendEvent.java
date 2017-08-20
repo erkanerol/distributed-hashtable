@@ -7,7 +7,7 @@ public class AttendEvent extends NetworkEvent {
     private final boolean initialStateRequest;
 
     public AttendEvent(String hostname, int port, boolean initialStateRequest) {
-        super(hostname,port);
+        super(hostname, port);
         this.initialStateRequest = initialStateRequest;
     }
 

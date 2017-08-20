@@ -2,7 +2,7 @@ package com.erkanerol.event.network;
 
 import com.erkanerol.event.Event;
 
-public abstract class NetworkEvent extends Event{
+public abstract class NetworkEvent extends Event {
     protected final int port;
     protected final String hostname;
 

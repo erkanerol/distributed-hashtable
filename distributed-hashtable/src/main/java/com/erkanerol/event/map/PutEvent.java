@@ -2,7 +2,7 @@ package com.erkanerol.event.map;
 
 import com.erkanerol.event.EventType;
 
-public class PutEvent<K,V> extends TableEvent {
+public class PutEvent<K, V> extends TableEvent {
 
     private final String tableName;
     private final K key;

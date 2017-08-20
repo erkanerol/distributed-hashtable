@@ -2,14 +2,18 @@ package com.erkanerol.core;
 
 import com.erkanerol.network.Peer;
 
-import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * contains configs for {@link com.erkanerol.core.DistributedHashTableManager}
+ *
+ * @author Erkan Erol
+ */
 public class Config {
 
     private final int port;
     private final String hostname;
-    List<Peer> peerList;
+    private List<Peer> peerList;
     private final int poolSize;
 
     public Config(String hostname, int port, List<Peer> peerList, int poolSize) {

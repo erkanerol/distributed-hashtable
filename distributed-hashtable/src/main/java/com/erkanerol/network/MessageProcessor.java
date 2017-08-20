@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 
-public class MessageProcessor extends Thread{
+public class MessageProcessor extends Thread {
 
     Logger logger = LoggerFactory.getLogger(MessageProcessor.class);
 
@@ -28,11 +28,11 @@ public class MessageProcessor extends Thread{
 
         try {
 
-            logger.debug("Message processing  is started: {} {}", socket.getInetAddress().getHostAddress(),socket.getPort());
+            logger.debug("Message processing  is started: {} {}", socket.getInetAddress().getHostAddress(), socket.getPort());
             ObjectInputStream ois = new ObjectInputStream(this.socket.getInputStream());
             Event event = (Event) ois.readObject();
-            logger.debug("Event is get:"+event.toString());
-            eventListener.processEvent (this.socket, event);
+            logger.debug("Event is get:" + event.toString());
+            eventListener.processEvent(this.socket, event);
             socket.close();
             logger.debug("socket is closing");
         } catch (IOException | ClassNotFoundException e) {

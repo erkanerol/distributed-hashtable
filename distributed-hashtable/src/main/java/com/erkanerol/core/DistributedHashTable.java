@@ -10,12 +10,19 @@ import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.Map;
 
-public class DistributedHashTable<K,V> implements Serializable{
+/**
+ * a simple wrapper for {@link java.util.Hashtable}
+ * <p>
+ * keeps a listener reference and calls it in the operations
+ *
+ * @author Erkan Erol
+ */
+public class DistributedHashTable<K, V> implements Serializable {
 
     private static Logger logger = LoggerFactory.getLogger(DistributedHashTable.class);
 
     private final String tableName;
-    private final Map<K,V> internalTable;
+    private final Map<K, V> internalTable;
     private transient final TableEventListener listener;
 
     public DistributedHashTable(String tableName, TableEventListener listener) {
@@ -31,32 +38,32 @@ public class DistributedHashTable<K,V> implements Serializable{
     }
 
     public void put(K key, V value) {
-        logger.debug("PUT table:{} key:{} value:{}",tableName,key,value);
-        synchronized (this){
-            internalTable.put(key,value);
-            listener.processTableEvent(new PutEvent(this.tableName,key,value));
+        logger.debug("PUT table:{} key:{} value:{}", tableName, key, value);
+        synchronized (this) {
+            internalTable.put(key, value);
+            listener.processTableEvent(new PutEvent(this.tableName, key, value));
         }
 
     }
 
     protected void putLocal(K key, V value) {
-        logger.debug("PUT LOCAL table:{} key:{} value:{}",tableName,key,value);
-        synchronized (this){
-            internalTable.put(key,value);
+        logger.debug("PUT LOCAL table:{} key:{} value:{}", tableName, key, value);
+        synchronized (this) {
+            internalTable.put(key, value);
         }
 
     }
 
 
     public V get(K key) {
-        logger.debug("GET table:{} key:{} value:{}",tableName,key);
+        logger.debug("GET table:{} key:{} value:{}", tableName, key);
         return internalTable.get(key);
     }
 
 
     public void remove(K key) {
-        logger.debug("REMOVE table:{} key:{} value:{}",tableName,key);
-        synchronized (this){
+        logger.debug("REMOVE table:{} key:{} value:{}", tableName, key);
+        synchronized (this) {
             internalTable.remove(key);
             listener.processTableEvent(new RemoveEvent(this.tableName, key));
         }
@@ -64,15 +71,15 @@ public class DistributedHashTable<K,V> implements Serializable{
     }
 
     protected void removeLocal(K key) {
-        logger.debug("REMOVE LOCAL table:{} key:{} value:{}",tableName,key);
-        synchronized (this){
+        logger.debug("REMOVE LOCAL table:{} key:{} value:{}", tableName, key);
+        synchronized (this) {
             internalTable.remove(key);
         }
     }
 
-    protected void printContent(){
-        for (Map.Entry entry: internalTable.entrySet()){
-            logger.trace("Table:{},  Key:{}  Value:{}"+tableName,entry.getKey(),entry.getValue());
+    protected void printContent() {
+        for (Map.Entry entry : internalTable.entrySet()) {
+            logger.trace("Table:{},  Key:{}  Value:{}" + tableName, entry.getKey(), entry.getValue());
         }
     }
 }
