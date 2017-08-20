@@ -7,6 +7,10 @@ A distributed hashtable implementation library where developers can use in order
 
 https://erkanerol.github.io/distributed-hashtable/
 
-### Example Usage
+### cache example with this library
 
 https://github.com/erkanerol/distributed-hashtable/tree/master/cache-example
+
+### counter example with this library
+
+https://github.com/erkanerol/distributed-hashtable/tree/master/counter-example

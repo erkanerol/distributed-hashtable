@@ -13,6 +13,7 @@
 
     <modules>
         <module>cache-example</module>
+        <module>counter-example</module>
         <module>distributed-hashtable</module>
     </modules>
 
