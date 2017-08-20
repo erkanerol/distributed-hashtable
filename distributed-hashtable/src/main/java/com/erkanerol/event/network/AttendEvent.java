@@ -1,6 +1,6 @@
-package com.erkanerol.events.network;
+package com.erkanerol.event.network;
 
-import com.erkanerol.events.EventType;
+import com.erkanerol.event.EventType;
 
 public class AttendEvent extends NetworkEvent {
 

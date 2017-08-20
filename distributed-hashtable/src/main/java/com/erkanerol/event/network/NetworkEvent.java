@@ -1,6 +1,6 @@
-package com.erkanerol.events.network;
+package com.erkanerol.event.network;
 
-import com.erkanerol.events.Event;
+import com.erkanerol.event.Event;
 
 public abstract class NetworkEvent extends Event{
     protected final int port;
@@ -18,4 +18,5 @@ public abstract class NetworkEvent extends Event{
     public int getPort() {
         return port;
     }
+
 }

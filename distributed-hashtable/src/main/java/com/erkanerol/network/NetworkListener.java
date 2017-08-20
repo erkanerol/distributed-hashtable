@@ -1,6 +1,6 @@
 package com.erkanerol.network;
 
-import com.erkanerol.events.EventListener;
+import com.erkanerol.event.EventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +54,7 @@ public class NetworkListener extends Thread {
         try {
             logger.info("Server socket is closing");
             isRunning = false;
-            this.serverSocket.close();
+            serverSocket.close();
         } catch (IOException e) {
             logger.error("Server socket cannot be closed",e);
         }

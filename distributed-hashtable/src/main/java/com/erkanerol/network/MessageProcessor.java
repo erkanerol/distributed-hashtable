@@ -1,7 +1,7 @@
 package com.erkanerol.network;
 
-import com.erkanerol.events.Event;
-import com.erkanerol.events.EventListener;
+import com.erkanerol.event.Event;
+import com.erkanerol.event.EventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,13 +28,13 @@ public class MessageProcessor extends Thread{
 
         try {
 
-            logger.info("Message processing  is started: {} {}", socket.getInetAddress().getHostAddress(),socket.getPort());
+            logger.debug("Message processing  is started: {} {}", socket.getInetAddress().getHostAddress(),socket.getPort());
             ObjectInputStream ois = new ObjectInputStream(this.socket.getInputStream());
-            logger.info("Message is reading");
             Event event = (Event) ois.readObject();
-            logger.info("Event is get:"+event.toString());
+            logger.debug("Event is get:"+event.toString());
             eventListener.processEvent (this.socket, event);
             socket.close();
+            logger.debug("socket is closing");
         } catch (IOException | ClassNotFoundException e) {
             logger.error("Exception in reading socket", e);
         }

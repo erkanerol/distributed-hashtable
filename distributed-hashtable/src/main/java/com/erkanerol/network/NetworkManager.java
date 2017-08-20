@@ -3,12 +3,12 @@ package com.erkanerol.network;
 import com.erkanerol.core.Config;
 import com.erkanerol.core.DistributedHashTable;
 import com.erkanerol.core.DistributedHashTableManager;
-import com.erkanerol.events.Event;
-import com.erkanerol.events.EventListener;
-import com.erkanerol.events.map.MapEvent;
-import com.erkanerol.events.network.AttendEvent;
-import com.erkanerol.events.network.LeaveEvent;
-import com.erkanerol.events.network.NetworkEvent;
+import com.erkanerol.event.Event;
+import com.erkanerol.event.EventListener;
+import com.erkanerol.event.map.TableEvent;
+import com.erkanerol.event.network.AttendEvent;
+import com.erkanerol.event.network.LeaveEvent;
+import com.erkanerol.event.network.NetworkEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,8 +81,8 @@ public class NetworkManager implements EventListener{
 
     @Override
     public synchronized void processEvent(Socket socket, Event event) {
-        if (event instanceof MapEvent){
-            distributedHashTableManager.handleMapEvent((MapEvent) event);
+        if (event instanceof TableEvent){
+            distributedHashTableManager.handleTableEvent((TableEvent) event);
         }else {
             processNetworkEvent(socket, (NetworkEvent) event);
         }
@@ -110,7 +110,7 @@ public class NetworkManager implements EventListener{
     private void writeAllStateToSocket(Socket socket) {
 
         try {
-            Map<String, DistributedHashTable> maps = distributedHashTableManager.exportMaps();
+            Map<String, DistributedHashTable> maps = distributedHashTableManager.exportTables();
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             out.writeObject(maps);
         } catch (IOException e) {
@@ -133,7 +133,7 @@ public class NetworkManager implements EventListener{
                 if (attendEvent.isInitialStateRequest()){
                     ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
                     Map<String, DistributedHashTable> maps  = (Map<String, DistributedHashTable>) ois.readObject();
-                    distributedHashTableManager.importMaps(maps);
+                    distributedHashTableManager.importTables(maps);
                     socket.close();
                 }
             }

@@ -1,4 +1,4 @@
-package com.erkanerol.events;
+package com.erkanerol.event;
 
 public enum EventType {
 

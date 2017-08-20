@@ -1,66 +1,78 @@
 package com.erkanerol.core;
 
-import com.erkanerol.events.MapEventListener;
-import com.erkanerol.events.map.PutEvent;
-import com.erkanerol.events.map.RemoveEvent;
+import com.erkanerol.event.TableEventListener;
+import com.erkanerol.event.map.PutEvent;
+import com.erkanerol.event.map.RemoveEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 
 public class DistributedHashTable<K,V> implements Serializable{
 
-    private final String mapName;
-    private final Map<K,V> internalMap;
-    private transient final MapEventListener listener;
+    private static Logger logger = LoggerFactory.getLogger(DistributedHashTable.class);
 
-    public DistributedHashTable(String mapName, MapEventListener listener) {
+    private final String tableName;
+    private final Map<K,V> internalTable;
+    private transient final TableEventListener listener;
+
+    public DistributedHashTable(String tableName, TableEventListener listener) {
         this.listener = listener;
-        this.internalMap = new HashMap<>();
-        this.mapName = mapName;
+        this.internalTable = new Hashtable<>();
+        this.tableName = tableName;
     }
 
-    public DistributedHashTable(DistributedHashTable mapCopy, MapEventListener listener) {
-        this.mapName = mapCopy.mapName;
-        this.internalMap = mapCopy.internalMap;
+    public DistributedHashTable(DistributedHashTable mapCopy, TableEventListener listener) {
+        this.tableName = mapCopy.tableName;
+        this.internalTable = mapCopy.internalTable;
         this.listener = listener;
     }
 
     public void put(K key, V value) {
-
+        logger.debug("PUT table:{} key:{} value:{}",tableName,key,value);
         synchronized (this){
-            internalMap.put(key,value);
-            listener.processMapEvent(new PutEvent(this.mapName,key,value));
+            internalTable.put(key,value);
+            listener.processTableEvent(new PutEvent(this.tableName,key,value));
         }
 
     }
 
     protected void putLocal(K key, V value) {
-
+        logger.debug("PUT LOCAL table:{} key:{} value:{}",tableName,key,value);
         synchronized (this){
-            internalMap.put(key,value);
+            internalTable.put(key,value);
         }
 
     }
 
 
     public V get(K key) {
-        return internalMap.get(key);
+        logger.debug("GET table:{} key:{} value:{}",tableName,key);
+        return internalTable.get(key);
     }
 
 
     public void remove(K key) {
-
+        logger.debug("REMOVE table:{} key:{} value:{}",tableName,key);
         synchronized (this){
-            internalMap.remove(key);
-            listener.processMapEvent(new RemoveEvent(this.mapName, key));
+            internalTable.remove(key);
+            listener.processTableEvent(new RemoveEvent(this.tableName, key));
         }
 
     }
 
     protected void removeLocal(K key) {
+        logger.debug("REMOVE LOCAL table:{} key:{} value:{}",tableName,key);
         synchronized (this){
-            internalMap.remove(key);
+            internalTable.remove(key);
+        }
+    }
+
+    protected void printContent(){
+        for (Map.Entry entry: internalTable.entrySet()){
+            logger.trace("Table:{},  Key:{}  Value:{}"+tableName,entry.getKey(),entry.getValue());
         }
     }
 }
