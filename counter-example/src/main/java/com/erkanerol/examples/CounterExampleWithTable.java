@@ -1,12 +1,13 @@
 package com.erkanerol.examples;
 
-import com.erkanerol.core.*;
-import com.erkanerol.network.Peer;
-
-import java.util.Scanner;
-
 import static spark.Spark.get;
 import static spark.Spark.port;
+
+import com.erkanerol.core.Config;
+import com.erkanerol.core.DistributedHashTable;
+import com.erkanerol.core.DistributedHashTableManager;
+import com.erkanerol.core.DistributedHashTableManagerFactory;
+import com.erkanerol.network.Peer;
 
 
 public class CounterExampleWithTable {
@@ -39,20 +40,20 @@ public class CounterExampleWithTable {
 
     private static Config getConfigsFromArguments(String[] args) {
 
-        ConfigBuilder builder = ConfigBuilder.builder();
+    	Config config = new Config();
 
         if (args.length > 2) {
-            builder.setHostName(args[1]);
-            builder.setPort(Integer.parseInt(args[2]));
+        	config.setHostname(args[1]);
+        	config.setPort(Integer.parseInt(args[2]));
         }
 
         // add peers to config
         if (args.length > 4) {
             for (int i = 3; i < args.length; i = i + 2) {
-                builder.addPeer(new Peer(args[i], Integer.parseInt(args[i + 1])));
+            	config.addPeer(new Peer(args[i], Integer.parseInt(args[i + 1])));
             }
         }
 
-        return builder.createConfig();
+        return config;
     }
 }

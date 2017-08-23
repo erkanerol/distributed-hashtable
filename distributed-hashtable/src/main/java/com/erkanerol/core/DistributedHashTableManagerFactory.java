@@ -7,7 +7,7 @@ public class DistributedHashTableManagerFactory {
      * creates a new {@link DistributedHashTableManager} with default configs and starts it
      * */
     public static DistributedHashTableManager createNewInstance() {
-        Config config = ConfigBuilder.builder().createConfig();
+        Config config = new Config();
         DistributedHashTableManager manager = new DistributedHashTableManager(config);
         manager.startUp();
         return manager;

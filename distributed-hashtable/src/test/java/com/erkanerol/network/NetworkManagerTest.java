@@ -1,16 +1,16 @@
 package com.erkanerol.network;
 
-import com.erkanerol.core.Config;
-import com.erkanerol.core.ConfigBuilder;
-import com.erkanerol.core.DistributedHashTableManager;
-import org.junit.Test;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
+import org.junit.Test;
+
+import com.erkanerol.core.Config;
+import com.erkanerol.core.DistributedHashTableManager;
 
 public class NetworkManagerTest {
 
@@ -18,7 +18,7 @@ public class NetworkManagerTest {
     public void open_AtTheBeginning_OpenServerSocket(){
 
         DistributedHashTableManager manager = mock(DistributedHashTableManager.class);
-        Config config = ConfigBuilder.builder().createConfig();
+        Config config = new Config();
         NetworkManager networkManager = new NetworkManager(manager,config);
 
         networkManager.open();
@@ -30,7 +30,7 @@ public class NetworkManagerTest {
     public void open_AlreadyOpened_ThrowsNetworkException(){
 
         DistributedHashTableManager manager = mock(DistributedHashTableManager.class);
-        Config config = ConfigBuilder.builder().createConfig();
+        Config config = new Config();
         NetworkManager networkManager = new NetworkManager(manager,config);
 
         networkManager.open();
@@ -50,7 +50,7 @@ public class NetworkManagerTest {
     public void close_AtTheEnd_CloseServerSocket(){
 
         DistributedHashTableManager manager = mock(DistributedHashTableManager.class);
-        Config config = ConfigBuilder.builder().createConfig();
+        Config config = new Config();
         NetworkManager networkManager = new NetworkManager(manager,config);
 
         networkManager.open();
@@ -64,7 +64,7 @@ public class NetworkManagerTest {
     public void close_BeforeOpen_ThrowsNetworkException(){
 
         DistributedHashTableManager manager = mock(DistributedHashTableManager.class);
-        Config config = ConfigBuilder.builder().createConfig();
+        Config config = new Config();
         NetworkManager networkManager = new NetworkManager(manager,config);
 
         try{

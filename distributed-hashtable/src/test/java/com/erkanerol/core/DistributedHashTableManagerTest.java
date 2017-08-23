@@ -21,9 +21,9 @@ public class DistributedHashTableManagerTest {
 
     @Test
     public void putGetWithTwoInstance() {
-        Config config2 = ConfigBuilder.builder().setPort(ConfigBuilder.DEFAULT_PORT+1)
-                .addPeer(new Peer(ConfigBuilder.DEFAULT_HOSTNAME, ConfigBuilder.DEFAULT_PORT))
-                .createConfig();
+        Config config2 = new Config();
+        config2.setPort(Config.DEFAULT_PORT+1);
+        config2.addPeer(new Peer(Config.DEFAULT_HOSTNAME, Config.DEFAULT_PORT));
 
         DistributedHashTableManager manager1 = DistributedHashTableManagerFactory.createNewInstance();
         DistributedHashTableManager manager2 = DistributedHashTableManagerFactory.createNewInstance(config2);
@@ -46,9 +46,10 @@ public class DistributedHashTableManagerTest {
 
     @Test
     public void get_attendToNetworkAfterPut_FindsValue() {
-        Config config2 = ConfigBuilder.builder().setPort(ConfigBuilder.DEFAULT_PORT+1)
-                .addPeer(new Peer(ConfigBuilder.DEFAULT_HOSTNAME, ConfigBuilder.DEFAULT_PORT))
-                .createConfig();
+        Config config2 = new Config();
+        config2.setPort(Config.DEFAULT_PORT+1);
+        config2.addPeer(new Peer(Config.DEFAULT_HOSTNAME, Config.DEFAULT_PORT));
+                
 
 
         DistributedHashTableManager manager1 = DistributedHashTableManagerFactory.createNewInstance();
@@ -69,14 +70,16 @@ public class DistributedHashTableManagerTest {
 
     @Test
     public void putGetRemoveWithThreeInstance() {
-        Config config2 = ConfigBuilder.builder().setPort(ConfigBuilder.DEFAULT_PORT+1)
-                .addPeer(new Peer(ConfigBuilder.DEFAULT_HOSTNAME, ConfigBuilder.DEFAULT_PORT))
-                .createConfig();
+        Config config2 = new Config();
+        config2.setPort(Config.DEFAULT_PORT+1);
+        config2.addPeer(new Peer(Config.DEFAULT_HOSTNAME, Config.DEFAULT_PORT));
+                
 
-        Config config3 = ConfigBuilder.builder().setPort(ConfigBuilder.DEFAULT_PORT+2)
-                .addPeer(new Peer(ConfigBuilder.DEFAULT_HOSTNAME, ConfigBuilder.DEFAULT_PORT))
-                .addPeer(new Peer(ConfigBuilder.DEFAULT_HOSTNAME, ConfigBuilder.DEFAULT_PORT+1))
-                .createConfig();
+        Config config3 = new Config();
+        config3.setPort(Config.DEFAULT_PORT+2);
+        config3.addPeer(new Peer(Config.DEFAULT_HOSTNAME, Config.DEFAULT_PORT));
+        config3.addPeer(new Peer(Config.DEFAULT_HOSTNAME, Config.DEFAULT_PORT+1));
+               
 
         DistributedHashTableManager manager1 = DistributedHashTableManagerFactory.createNewInstance();
         DistributedHashTableManager manager2 = DistributedHashTableManagerFactory.createNewInstance(config2);

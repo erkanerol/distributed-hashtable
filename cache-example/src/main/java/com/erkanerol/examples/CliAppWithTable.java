@@ -56,20 +56,20 @@ public class CliAppWithTable {
 
     private static Config getConfigsFromArguments(String[] args) {
 
-        ConfigBuilder builder = ConfigBuilder.builder();
-
+    	Config config = new Config();
+    	
         if (args.length > 1) {
-            builder.setHostName(args[0]);
-            builder.setPort(Integer.parseInt(args[1]));
+        	config.setHostname(args[0]);
+            config.setPort(Integer.parseInt(args[1]));
         }
 
         // add peers to config
         if (args.length > 3) {
             for (int i = 2; i < args.length; i = i + 2) {
-                builder.addPeer(new Peer(args[i], Integer.parseInt(args[i + 1])));
+            	config.addPeer(new Peer(args[i], Integer.parseInt(args[i + 1])));
             }
         }
 
-        return builder.createConfig();
+        return config;
     }
 }

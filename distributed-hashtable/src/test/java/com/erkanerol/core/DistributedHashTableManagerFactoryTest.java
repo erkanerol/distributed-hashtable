@@ -16,7 +16,9 @@ public class DistributedHashTableManagerFactoryTest {
 
     @Test
     public void createNewInstance_CustomConfig_ReturnsManager() {
-        Config config = ConfigBuilder.builder().setPort(9789).setHostName("erkanerol.github.io").createConfig();
+        Config config = new Config(); 
+        config.setPort(9789);
+        config.setHostname("erkanerol.github.io");
         DistributedHashTableManager manager = DistributedHashTableManagerFactory.createNewInstance(config);
         assertNotNull(manager);
         manager.shutDown();
