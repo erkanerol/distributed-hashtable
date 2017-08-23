@@ -38,7 +38,7 @@ public class NetworkListener extends Thread {
             logger.info("server socket is opened. Port:{}", port);
         } catch (IOException e) {
             logger.error("I/O exception in server socket opening", e);
-            throw new NetworkException("I/O exception in server socket opening", e);
+            throw new RuntimeException("I/O exception in server socket opening", e);
         }
 
         executor = Executors.newFixedThreadPool(poolSize);

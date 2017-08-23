@@ -56,7 +56,7 @@ public class NetworkManager implements EventListener {
     public void open() {
 
         if (this.netWorkListener != null && this.netWorkListener.isRunning()) {
-            throw new NetworkException("Network Manager is already opened");
+            throw new IllegalStateException("Network Manager is already opened");
         }
 
         logger.info("network listener is starting");
@@ -82,7 +82,7 @@ public class NetworkManager implements EventListener {
     public void close() {
 
         if (this.netWorkListener == null || !this.netWorkListener.isRunning()) {
-            throw new NetworkException("Network Manager is not running");
+            throw new IllegalStateException("Network Manager is not running");
         }
 
         this.netWorkListener.shutdown();

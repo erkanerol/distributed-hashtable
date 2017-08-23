@@ -38,7 +38,7 @@ public class NetworkManagerTest {
         try{
             networkManager.open();
             assert false;
-        }catch (NetworkException ne){
+        }catch (IllegalStateException ne){
 
         }finally {
             networkManager.close();
@@ -70,7 +70,7 @@ public class NetworkManagerTest {
         try{
             networkManager.close();
             assert false;
-        }catch (NetworkException ne){
+        }catch (IllegalStateException ne){
 
         }
     }
