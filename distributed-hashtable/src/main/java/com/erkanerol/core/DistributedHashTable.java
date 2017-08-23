@@ -7,8 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
+
 
 /**
  * a simple wrapper for {@link java.util.Hashtable}
@@ -33,7 +34,7 @@ public class DistributedHashTable<K, V> implements Serializable {
      */
     public DistributedHashTable(String tableName, TableEventListener listener) {
         this.listener = listener;
-        this.internalTable = new Hashtable<>();
+        this.internalTable = new HashMap<>();
         this.tableName = tableName;
     }
 
