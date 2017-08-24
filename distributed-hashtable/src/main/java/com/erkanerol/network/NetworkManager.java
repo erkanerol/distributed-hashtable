@@ -5,6 +5,8 @@ import com.erkanerol.core.DistributedHashTable;
 import com.erkanerol.core.DistributedHashTableManager;
 import com.erkanerol.event.Event;
 import com.erkanerol.event.EventListener;
+import com.erkanerol.event.EventListenerImpl;
+import com.erkanerol.event.NetworkEventHandler;
 import com.erkanerol.event.map.TableEvent;
 import com.erkanerol.event.network.AttendEvent;
 import com.erkanerol.event.network.LeaveEvent;
@@ -22,7 +24,7 @@ import java.util.Map;
 /**
  * a manager class that coordinates all components about network
  */
-public class NetworkManager implements EventListener {
+public class NetworkManager implements NetworkEventHandler {
 
     private static Logger logger = LoggerFactory.getLogger(NetworkManager.class);
 
@@ -60,7 +62,8 @@ public class NetworkManager implements EventListener {
         }
 
         logger.info("network listener is starting");
-        this.netWorkListener = new NetworkListener(this, this.port, this.poolSize);
+        EventListener eventListener = new EventListenerImpl(this.distributedHashTableManager, this);
+        this.netWorkListener = new NetworkListener(eventListener, this.port, this.poolSize);
         this.netWorkListener.start();
 
         logger.info("attend event is propagating");
@@ -106,48 +109,10 @@ public class NetworkManager implements EventListener {
     }
 
     /**
-     * handles an event and write response to socket if necessary
-     * @param socket the socket that the response will be written
-     * @param event the event that will be handled
-     */
-    @Override
-    public synchronized void processEvent(Socket socket, Event event) {
-        if (event instanceof TableEvent) {
-            distributedHashTableManager.handleTableEvent((TableEvent) event);
-        } else {
-            processNetworkEvent(socket, (NetworkEvent) event);
-        }
-    }
-
-    /**
-     * handles network event an write response to socket if necessary
-     * @param socket the socket that the response will be written
-     * @param networkEvent the event that will be handled
-     */
-    private void processNetworkEvent(Socket socket, NetworkEvent networkEvent) {
-        if (networkEvent instanceof AttendEvent) {
-            AttendEvent attendEvent = (AttendEvent) networkEvent;
-            Peer peer = new Peer(attendEvent.getHostname(), attendEvent.getPort());
-            this.peerList.add(peer);
-
-            if (attendEvent.isInitialStateRequest()) {
-                writeAllStateToSocket(socket);
-            }
-            logger.info("New peer is added {}", peer);
-        } else if (networkEvent instanceof LeaveEvent) {
-            LeaveEvent leaveEvent = (LeaveEvent) networkEvent;
-            Peer peer = new Peer(leaveEvent.getHostname(), leaveEvent.getPort());
-            logger.info("A peer is gonna leave. size: {}", this.peerList.size());
-            this.peerList.remove(peer);
-            logger.info("A peer is leaved {}  new size:{}", peer, this.peerList.size());
-        }
-    }
-
-    /**
      * exports all tables from manager and writes them into socket
      * @param socket the socket that the response will be written
      */
-    private void writeAllStateToSocket(Socket socket) {
+    public void writeAllStateToSocket(Socket socket) {
 
         try {
             Map<String, DistributedHashTable> maps = distributedHashTableManager.exportTables();
@@ -192,6 +157,43 @@ public class NetworkManager implements EventListener {
             return false;
         }
 
+    }
+
+
+
+    /**
+     * handles network event an write response to socket if necessary
+     *
+     * the method is synchronized and the manager waits for
+     * writing initial state to new peer if it requests. since it uses the peer list
+     * in {@link #propagate(Event)} and has to be sure the new peer state is valid.
+     *
+     * since we cannot
+     * send new events before finishing the process to
+     * @param socket the socket that the response will be written
+     * @param networkEvent the event that will be handled
+     */
+    @Override
+    public synchronized void handleNetworkEvent(Socket socket, NetworkEvent networkEvent) {
+        Peer peer = new Peer(networkEvent.getHostname(), networkEvent.getPort());
+
+        if (networkEvent instanceof AttendEvent) {
+            logger.debug("A peer is gonna attend. size: {}", this.peerList.size());
+            AttendEvent attendEvent = (AttendEvent) networkEvent;
+
+            this.peerList.add(peer);
+
+
+            if (attendEvent.isInitialStateRequest()) {
+                writeAllStateToSocket(socket);
+            }
+
+            logger.info("A peer is attended {}  , peer list size:{}", peer, this.peerList.size());
+        } else if (networkEvent instanceof LeaveEvent) {
+            logger.debug("A peer is gonna be removed from list. size: {}", this.peerList.size());
+            this.peerList.remove(peer);
+            logger.info("A peer is leaved {}  , peer list size:{}", peer, this.peerList.size());
+        }
     }
 
 }

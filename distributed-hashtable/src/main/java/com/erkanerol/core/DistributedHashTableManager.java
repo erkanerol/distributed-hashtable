@@ -96,6 +96,8 @@ public class DistributedHashTableManager implements TableEventListener, TableEve
 
     /**
      * handles an event came from network
+     *
+     * the synchronization are done by each table
      * @param tableEvent
      */
     @Override
