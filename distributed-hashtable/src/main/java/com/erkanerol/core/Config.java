@@ -22,7 +22,7 @@ public class Config {
     private int poolSize;
 
     /**
-    * contsruct a config with default values
+    * construct a config with default values
     */
    public Config() {
 	   this.port = DEFAULT_PORT;

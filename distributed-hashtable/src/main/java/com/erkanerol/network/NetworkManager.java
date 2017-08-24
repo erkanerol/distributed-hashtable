@@ -119,7 +119,7 @@ public class NetworkManager implements NetworkEventHandler {
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             out.writeObject(maps);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Error in sending initial state to new peer",e);
         }
 
     }
@@ -150,7 +150,7 @@ public class NetworkManager implements NetworkEventHandler {
             logger.debug("Socket is closing.");
             return true;
         } catch (IOException e) {
-            logger.info("The message cannot be sent. The node may be leaved.");
+            logger.info("The message cannot be sent. The node may be leaved from the network or temporarily inaccessible.");
             return false;
         } catch (ClassNotFoundException e) {
             logger.error("Unexpected error");

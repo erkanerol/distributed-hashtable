@@ -60,7 +60,7 @@ public class NetworkListener extends Thread {
                 executor.execute(new MessageProcessor(this.eventListener, socket));
             } catch (IOException e) {
                 if (isRunning) {
-                    logger.error("I/O error: ", e);
+                    logger.error("I/O error in accepting new peer request: ", e);
                 } else {
                     logger.info("Socket is closed");
                 }
@@ -78,7 +78,8 @@ public class NetworkListener extends Thread {
             serverSocket.close();
             executor.shutdown();
         } catch (IOException e) {
-            logger.error("Server socket cannot be closed", e);
+            logger.error("Network listener cannot be closed properly", e);
+            throw new RuntimeException("Network listener cannot be closed properly", e);
         }
     }
 

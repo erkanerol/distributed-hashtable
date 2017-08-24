@@ -47,9 +47,8 @@ public class MessageProcessor extends Thread {
             socket.close();
             logger.debug("socket is closing");
         } catch (IOException | ClassNotFoundException e) {
-            logger.error("Exception in reading socket", e);
+            logger.error("Message comes from a peer cannot be read. Exception in reading socket", e);
         }
-        logger.info("run ends");
     }
 
 }
