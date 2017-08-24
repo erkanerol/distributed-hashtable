@@ -57,7 +57,7 @@ public class NetworkListener extends Thread {
             try {
                 socket = serverSocket.accept();
                 logger.info("a connection is setup with {}", socket.getInetAddress());
-                executor.submit(new MessageProcessor(this.eventListener, socket));
+                executor.execute(new MessageProcessor(this.eventListener, socket));
             } catch (IOException e) {
                 if (isRunning) {
                     logger.error("I/O error: ", e);
